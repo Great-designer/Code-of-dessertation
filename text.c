@@ -311,27 +311,17 @@ char temprefnum[110];//序号
 
 void process_ref()//处理文章中的参考文献。一行里面可能有多个参考文献，都要处理。
 {
-	int flag=0;//调试
 	int len=strlen(buf);
 	int i;
 	for(i=0; i<len; i++)
 	{
 		if(buf[i]=='[')//开始
 		{
-			flag=1;
-			if(flag==1)
-			{
-				printf("%c",buf[i]);
-			}
 			int j=i;
 			j++;
 			while(isdigit(buf[j]))
 			{
 				j++;
-			}
-			if(flag==1)
-			{
-				printf("%c",buf[j]);
 			}
 			if(buf[j]==']')//找到了
 			{
@@ -503,6 +493,7 @@ void process_text()//这一行里拥有绪论——未完成。执行结束后�
 	NUMBER_chapter=1;//当前章序号
 	NUMBER_picture=1;//当前图序号
 	NUMBER_ref=1;//参考文献序号
+	NUMBER_code=1;//代码序号
 	char *a=strstr(buf,"结论");
 	initmode=1;//特判
 	while(1)
@@ -560,32 +551,365 @@ void process_text()//这一行里拥有绪论——未完成。执行结束后�
 	}
 }
 
-void process_conclusion()//结论部分——待完成
+void process_conclusion()//结论部分
 {
-	
+	fprintf(out,"%% !Mode:: \"TeX:UTF-8\"\n");
+	fprintf(out,"\\chapter*{结论\\markboth{结论}{}}\n");
+	fprintf(out,"\\addcontentsline{toc}{chapter}{结论}\n");
+	fgets(buf,15010,in);//最后读入新的一行，检查是否应该终止
+	char *a=strstr(buf,"北京航空航天大学毕业设计");
+	if(a!=NULL)
+	{
+		fgets(buf,15010,in);//重新读入一遍
+	}
+	int len=strlen(buf);
+	len--;
+	while(isspace(buf[len]))//去掉末尾空白
+	{
+		len--;
+	}
+	len++;
+	buf[len]='\0';
+	a=strstr(buf,"致谢");
+	while(a==NULL)
+	{
+		process_escape();//处理转义字符
+		fprintf(out,"%s\n\n",buf);//输出并增加新的一行
+		fgets(buf,15010,in);//最后读入新的一行，检查是否应该终止
+		char *a=strstr(buf,"北京航空航天大学毕业设计");
+		if(a!=NULL)
+		{
+			fgets(buf,15010,in);//重新读入一遍
+		}
+		int len=strlen(buf);
+		len--;
+		while(isspace(buf[len]))//去掉末尾空白
+		{
+			len--;
+		}
+		len++;
+		buf[len]='\0';
+		a=strstr(buf,"致谢");
+		int flag=1;//检查致谢
+		if(a!=NULL)
+		{
+			if(a!=buf)
+			{
+				char *i;
+				for(i=a-1; i>=buf; i--)//这里炸了。不应该是a-1
+				{
+					if(isspace(*i)==0)//不是空白符
+					{
+						flag=0;
+					}
+				}
+			}
+			if(flag==1)//循环终止
+			{
+				break;
+			}
+		}
+	}
+	fprintf(out,"\\chapter*{致谢}\n");
+	fprintf(out,"\\addcontentsline{toc}{chapter}{致谢}\n");
+	fgets(buf,15010,in);//最后读入新的一行，检查是否应该终止
+	a=strstr(buf,"北京航空航天大学毕业设计");
+	if(a!=NULL)
+	{
+		fgets(buf,15010,in);//重新读入一遍
+	}
+	len=strlen(buf);
+	len--;
+	while(isspace(buf[len]))//去掉末尾空白
+	{
+		len--;
+	}
+	len++;
+	buf[len]='\0';
+	a=strstr(buf,"参");
+	char *b=strstr(buf,"考");
+	char *c=strstr(buf,"文");
+	char *d=strstr(buf,"献");
+	while(!(a!=NULL&&b!=NULL&&c!=NULL&&d!=NULL))
+	{
+		process_escape();//处理转义字符
+		fprintf(out,"%s\n\n",buf);//输出并增加新的一行
+		fgets(buf,15010,in);//最后读入新的一行，检查是否应该终止
+		char *a=strstr(buf,"北京航空航天大学毕业设计");
+		if(a!=NULL)
+		{
+			fgets(buf,15010,in);//重新读入一遍
+		}
+		int len=strlen(buf);
+		len--;
+		while(isspace(buf[len]))//去掉末尾空白
+		{
+			len--;
+		}
+		len++;
+		buf[len]='\0';
+		a=strstr(buf,"参");
+		b=strstr(buf,"考");
+		c=strstr(buf,"文");
+		d=strstr(buf,"献");
+		int flag=1;//检查致谢
+		if(a!=NULL&&b!=NULL&&c!=NULL&&d!=NULL)
+		{
+			if(a!=buf)
+			{
+				char *i;
+				for(i=a-1; i>=buf; i--)//这里炸了。不应该是a-1
+				{
+					if(isspace(*i)==0)//不是空白符
+					{
+						flag=0;
+					}
+				}
+			}
+			if(flag==1)//循环终止
+			{
+				break;
+			}
+		}
+	}
+	fprintf(out,"\\cleardoublepage\n");
 }
 
-//结论是一个“结论”和一个“展望”需要加标签，结束条件是“参考文献”
-//这段似乎比较无脑，什么都不用做
+char NUMBER_appchapter;//当前章序号
+char NUMBER_apppicture;//当前图序号
+char NUMBER_appcode;//当前代码序号
+char tempapptitle[20010];//暂存
 
-void process_conclusion()//附录部分——待完成
+int process_apptitle()//附录的标题
 {
-	
+	char *a=strstr(buf,"附录");
+	if(a==buf)//可能是附录标题
+	{
+		a+=strlen("附录");
+		while(isspace(*a))
+		{
+			a++;
+		}
+		if(!isalpha(*a))//这位不是字母
+		{
+			return 0;//不含标题
+		}
+		while(isalpha(*a))
+		{
+			a++;
+		}
+		while(isspace(*a))//之后a指向标题文本
+		{
+			a++;
+		}
+		strcpy(tempapptitle,a);//a指向第一个章标题处
+		buf[0]='\\';
+		buf[1]='c';
+		buf[2]='h';
+		buf[3]='a';
+		buf[4]='p';
+		buf[5]='t';
+		buf[6]='e';
+		buf[7]='r';
+		buf[8]='{';
+		buf[9]='\0';
+		strcat(buf,tempapptitle);
+		int len=strlen(buf);
+		len--;
+		while(isspace(buf[len]))//去掉末尾空白
+		{
+			len--;
+		}
+		len++;
+		buf[len]='}';
+		buf[len+1]='\0';
+		NUMBER_appchapter++;//更新章序号
+		NUMBER_apppicture=1;//更新图序号
+		NUMBER_appcode=1;//更新代码序号
+		return 1;//含章
+	}
+	return 0;//不含标题
 }
 
-//附录和正文的处理方式完全一样，似乎不需要处理参考文献，别的看看能不能调用完全相同的函数，还是复制粘贴一遍。这要参考样例
-//process_escape：转义字符，可以复用
-//process_title：标题，需要重写
-//process_ref：不需要这个功能
-//process_figure：图题不一样，重写
-//process_code：代码题不一样，重写
-//基本就这些，OK
+char tempapppic[20010];//处理图片
+char tempapppicnum[110];//序号
 
-//明天完成结论和附录部分之后，必须一并进行测试
-//结合latex测试结果进行样例修改和代码修改
-//今天的代码可以传GitHub……一会儿11点吧
-//多亏开了直播——进展神速，一天的进展超过半个月的进展（半个月在瞎写论文）
-//前面似乎不用改了
+void process_appfigure()//附录中的图
+{
+	char *a=strstr(buf,"图");
+	if(a!=buf)
+	{
+		return;
+	}
+	a+=strlen("图");
+	if(!isspace(*a))//不是图注
+	{
+		return;
+	}
+	while(isspace(*a))//图注这里有空格
+	{
+		a++;
+	}
+	if(!isalpha(*a))//不是图注
+	{
+		return;
+	}
+	while(isalpha(*a))
+	{
+		a++;
+	}
+	if(!isdigit(*a))//不是图注
+	{
+		return;
+	}
+	while(isdigit(*a))
+	{
+		a++;
+	}
+	if(!isspace(*a))//不是图注
+	{
+		return;
+	}
+	while(isspace(*a))//跳过空白。a指向图片标题
+	{
+		a++;
+	}
+	strcpy(tempapppic,"\\begin{figure}[h!]\\centering\\includegraphics[width=0.4\\textwidth]{figure/");//图片前缀
+	sprintf(tempapppicnum,"%c",NUMBER_appchapter);//章号
+	strcat(tempapppic,tempapppicnum);
+	strcat(tempapppic,".");
+	sprintf(tempapppicnum,"%d",NUMBER_apppicture);//图号
+	NUMBER_apppicture++;
+	strcat(tempapppic,tempapppicnum);
+	strcat(tempapppic,".pdf}\\caption{");
+	strcat(tempapppic,a);
+	strcat(tempapppic,"}\\label{fig-sample}\\end{figure}");//图片后缀
+	strcpy(buf,tempapppic);//粘贴回buf
+}
+
+void process_appcode()
+{
+	fprintf(out,"\\begin{lstlisting}[language={C},caption={示例代码},label={%c%d},]\n",NUMBER_appchapter,NUMBER_appcode);//代码头。每行末尾有\n，含有章数，代码数
+	while(isdigit(buf[0]))//只要下一行仍旧以数字开头就仍旧位于代码段中
+	{
+		int i=0;
+		while(isdigit(buf[i]))//只要当前位仍然是数字，就直接吞掉。根据排版约定，不管是否正确
+		{
+			i++;
+		}
+		fprintf(out,"%s\n",&buf[i]);//输出。不增加新的一行
+		fgets(buf,15010,in);//最后读入新的一行，检查是否应该终止
+		char *a=strstr(buf,"北京航空航天大学毕业设计");
+		if(a!=NULL)
+		{
+			fgets(buf,15010,in);//重新读入一遍
+		}
+		int len=strlen(buf);
+		len--;
+		while(isspace(buf[len]))//去掉末尾空白
+		{
+			len--;
+		}
+		len++;
+		buf[len]='\0';
+	}
+	fprintf(out,"\\end{lstlisting}\n");
+	NUMBER_appcode++;//更新代码序号
+	char *a=strstr(buf,"代码");
+	if(a==buf)//最后一行会是代码题注，也要直接吞掉
+	{
+		fgets(buf,15010,in);//读入新的一行
+		int len=strlen(buf);
+		len--;
+		while(isspace(buf[len]))//去掉末尾空白
+		{
+			len--;
+		}
+		len++;
+		buf[len]='\0';
+	}
+}
+
+void process_appendix()//附录部分——待完成——处理标题
+{
+	fprintf(out,"%% !Mode:: \"TeX:UTF-8\"\n");
+	NUMBER_appchapter='A';//当前章序号
+	NUMBER_apppicture=1;//当前图序号
+	NUMBER_appcode=1;//当前代码序号
+	while(1)
+	{
+		if(iscode())//单独输出listing环境，不走buf，可以复用
+		{
+			process_appcode();
+		}
+		else
+		{
+			process_escape();//处理转义字符
+			int tit=process_apptitle();//处理标题
+			if(tit==0)//不含新的标题
+			{
+				process_appfigure();//处理图
+			}
+			fprintf(out,"%s\n\n",buf);//输出并增加新的一行
+			char *tt=fgets(buf,15010,in);//最后读入新的一行，检查是否应该终止
+			if(tt==NULL)
+			{
+				break;
+			}
+			char *a=strstr(buf,"北京航空航天大学毕业设计");
+			if(a!=NULL)
+			{
+				char *tt=fgets(buf,15010,in);//重新读入一遍
+				if(tt==NULL)
+				{
+					break;
+				}
+			}
+			int len=strlen(buf);
+			len--;
+			while(isspace(buf[len]))//去掉末尾空白
+			{
+				len--;
+			}
+			len++;
+			buf[len]='\0';
+		}
+	}
+}
+
+void checkappbegin()//附录A开头
+{
+	fgets(buf,15010,in);//含空白符
+	char *a=strstr(buf,"附录");
+	char *b=strstr(buf,"A");
+	while(1)
+	{
+		int flag=1;
+		if(a!=NULL&&b!=NULL)
+		{
+			if(a!=buf)
+			{
+				char *i;
+				for(i=a-1; i>=buf; i--)
+				{
+					if(isspace(*i)==0)//不是空白符
+					{
+						flag=0;
+					}
+				}
+			}
+			if(flag==1)
+			{
+				break;
+			}
+		}
+		fgets(buf,15010,in);
+		a=strstr(buf,"附录");
+		b=strstr(buf,"A");
+	}
+}
+
+//阶段性胜利！这边去上传一下GitHub
 
 int main()
 {
@@ -609,7 +933,7 @@ int main()
 //	printbibs();
 //	fclose(out);//关闭bibs
 	out=fopen("5appendix.tex","w");//打开appendix
-	checkbegin();//执行结束后，这一行里拥有附录——这个功能本来应该在上一部分
+	checkappbegin();//执行结束后，这一行里拥有附录——这个功能本来应该在上一部分
 	process_appendix();//附录部分——待完成
 	fclose(out);//关闭appendix
 	fclose(in);
