@@ -909,33 +909,33 @@ void checkappbegin()//附录A开头
 	}
 }
 
-char studentID[35];//学号
+char studentID[70];//学号
 int studentID_valid;//学号有效位
-char category[35];//中图分类号
+char category[70];//中图分类号
 int category_valid;//中图分类号有效位
-char title_ch[35];//中文标题
+char title_ch[70];//中文标题
 int title_ch_valid;//中文标题有效位
-char subtitle_ch[35];//中文副标题
+char subtitle_ch[70];//中文副标题
 int subtitle_ch_valid;//中文副标题有效位
-char title_en[35];//英文标题
+char title_en[70];//英文标题
 int title_en_valid;//英文标题有效位
-char subtitle_en[35];//英文副标题
+char subtitle_en[70];//英文副标题
 int subtitle_en_valid;//英文副标题有效位
-char school[35];//学院名
+char school[70];//学院名
 int school_valid;//学院名有效位
-char major[35];//专业名
+char major[70];//专业名
 int major_valid;//专业名有效位
-char author_ch[35];//作者名中文
+char author_ch[70];//作者名中文
 int author_ch_valid;//作者名中文有效位
-char author_en[35];//作者名英文
+char author_en[70];//作者名英文
 int author_en_valid;//作者名英文有效位
-char teacher_ch[35];//导师名中文
+char teacher_ch[70];//导师名中文
 int teacher_ch_valid;//导师名中文有效位
-char teacher_en[35];//导师名英文
+char teacher_en[70];//导师名英文
 int teacher_en_valid;//导师名英文有效位
-char thesisdate_year[35];//论文时间年
+char thesisdate_year[70];//论文时间年
 int thesisdate_year_valid;//论文时间年有效位
-char thesisdate_month[35];//论文时间月
+char thesisdate_month[70];//论文时间月
 int thesisdate_month_valid;//论文时间月有效位
 
 char assignReq1[60];//原始资料及设计1
@@ -977,25 +977,25 @@ int assignRef7_valid;
 char assignRef8[60];//参考文献8
 int assignRef8_valid;
 
-char class_num[35];//班级号
+char class_num[70];//班级号
 int class_num_valid;//班级号有效位
-char thesisbegin_year[35];//毕设开始时间年
+char thesisbegin_year[70];//毕设开始时间年
 int thesisbegin_year_valid;
-char thesisbegin_month[35];//毕设开始时间月
+char thesisbegin_month[70];//毕设开始时间月
 int thesisbegin_month_valid;
-char thesisbegin_date[35];//毕设开始时间日
+char thesisbegin_date[70];//毕设开始时间日
 int thesisbegin_date_valid;
-char thesisend_year[35];//毕设结束时间年
+char thesisend_year[70];//毕设结束时间年
 int thesisend_year_valid;
-char thesisend_month[35];//毕设结束时间月
+char thesisend_month[70];//毕设结束时间月
 int thesisend_month_valid;
-char thesisend_date[35];//毕设结束时间日
+char thesisend_date[70];//毕设结束时间日
 int thesisend_date_valid;
-char defense_year[35];//毕设答辩时间年
+char defense_year[70];//毕设答辩时间年
 int defense_year_valid;
-char defense_month[35];//毕设答辩时间月
+char defense_month[70];//毕设答辩时间月
 int defense_month_valid;
-char defense_date[35];//毕设答辩时间日
+char defense_date[70];//毕设答辩时间日
 int defense_date_valid;
 char abstract_ch[2010];//中文摘要
 int abstract_ch_valid;//中文摘要有效位
@@ -1013,11 +1013,13 @@ int checkcover()//用于提取信息的checkcover——要时刻检查样例。�
 	printf("%s\n",buf);
 	if(a!=NULL&&b!=NULL&&studentID_valid!=1)
 	{
+		printf("OK1\n");
 		b+=strlen("号");
 		while(isspace(*b))
 		{
 			b++;
 		}
+		printf("%s\n",b);
 		strcpy(studentID,b);
 		studentID_valid=1;
 		return 1;
@@ -1036,17 +1038,6 @@ int checkcover()//用于提取信息的checkcover——要时刻检查样例。�
 		category_valid=1;
 		return 1;
 	}
-//	a=strstr(buf,"毕业设计(论文)");//中文标题/副标题似乎和英文一起提取比较好，前面似乎会跨行
-//	if(a!=NULL&&title_ch_valid!=1)
-//	{
-//		readline();//读入新的
-//		strcpy(title_ch,buf);//标题
-//		title_ch_valid=1;
-//		readline();//读入新的
-//		strcpy(subtitle_ch,buf);//副标题
-//		subtitle_ch_valid=1;
-//		return 1;
-//	}
 	a=strstr(buf,"学");
 	b=strstr(buf,"院");
 	c=strstr(buf,"名");
@@ -1062,6 +1053,12 @@ int checkcover()//用于提取信息的checkcover——要时刻检查样例。�
 		d=school;
 		d+=strlen(school);
 		d-=strlen("学院");
+		d--;
+		while(isspace(*d))
+		{
+			d--;
+		}
+		d++;
 		*d='\0';
 		school_valid=1;
 		return 1;
@@ -1078,9 +1075,15 @@ int checkcover()//用于提取信息的checkcover——要时刻检查样例。�
 			d++;
 		}
 		strcpy(major,d);
-		d=school;
+		d=major;
 		d+=strlen(major);
 		d-=strlen("专业");
+		d--;
+		while(isspace(*d))
+		{
+			d--;
+		}
+		d++;
 		*d='\0';
 		major_valid=1;
 		return 1;
@@ -1106,6 +1109,8 @@ int checkcover()//用于提取信息的checkcover——要时刻检查样例。�
 	d=strstr(buf,"师");
 	if(a!=NULL&&b!=NULL&&c!=NULL&&d!=NULL&&teacher_ch_valid!=1)
 	{
+		printf("%d\n",teacher_ch_valid);
+		printf("here\n");
 		d+=strlen("师");
 		while(isspace(*d))
 		{
@@ -1113,6 +1118,7 @@ int checkcover()//用于提取信息的checkcover——要时刻检查样例。�
 		}
 		strcpy(teacher_ch,d);
 		teacher_ch_valid=1;
+		printf("%d\n",teacher_ch_valid);
 		fgets(buf,15010,in);//读入一行
 		int len=strlen(buf);
 		len--;
@@ -1155,149 +1161,323 @@ int checkcover()//用于提取信息的checkcover——要时刻检查样例。�
 		thesisdate_month_valid=1;
 		return 1;
 	}
-//接下来是“原始资料及设计”、“工作内容”、“参考文献”
-//	a=strstr(buf,"设计技术要求");
-//	if(a!=NULL&&assignReq1_valid!=1)
-//	{
-//		readline();//读入新的
-//		a=strstr(buf,"工作内容");
-//		if(a==NULL)
-//		{
-//			strcpy(assignReq1,buf);
-//			assignReq1_valid=1;
-//			readline();//读入新的
-//			a=strstr(buf,"工作内容");
-//			if(a==NULL)
-//			{
-//				strcpy(assignReq2,buf);
-//				assignReq2_valid=1;
-//				readline();//读入新的
-//				a=strstr(buf,"工作内容");
-//				if(a==NULL)
-//				{
-//					strcpy(assignReq3,buf);
-//					assignReq3_valid=1;
-//					readline();//读入新的
-//					a=strstr(buf,"工作内容");
-//					if(a==NULL)
-//					{
-//						strcpy(assignReq4,buf);
-//						assignReq4_valid=1;
-//						readline();//读入新的
-//						a=strstr(buf,"工作内容");
-//						if(a==NULL)
-//						{
-//							strcpy(assignReq5,buf);
-//							assignReq5_valid=1;
-//							readline();//读入新的
-//						}
-//					}
-//				}
-//			}
-//		}
-//		readline();//读入新的
-//		a=strstr(buf,"参考资料");
-//		if(a==NULL)
-//		{
-//			strcpy(assignWork1,buf);
-//			assignWork1_valid=1;
-//			readline();//读入新的
-//			a=strstr(buf,"参考资料");
-//			if(a==NULL)
-//			{
-//				strcpy(assignWork2,buf);
-//				assignWork2_valid=1;
-//				readline();//读入新的
-//				a=strstr(buf,"参考资料");
-//				if(a==NULL)
-//				{
-//					strcpy(assignWork3,buf);
-//					assignWork3_valid=1;
-//					readline();//读入新的
-//					a=strstr(buf,"参考资料");
-//					if(a==NULL)
-//					{
-//						strcpy(assignWork4,buf);
-//						assignWork4_valid=1;
-//						readline();//读入新的
-//						a=strstr(buf,"参考资料");
-//						if(a==NULL)
-//						{
-//							strcpy(assignWork5,buf);
-//							assignWork5_valid=1;
-//							readline();//读入新的
-//							a=strstr(buf,"参考资料");
-//							if(a==NULL)
-//							{
-//								strcpy(assignWork6,buf);
-//								assignWork6_valid=1;
-//								readline();//读入新的
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//		readline();//读入新的
-//		a=strstr(buf,"学院");
-//		if(a==NULL)
-//		{
-//			strcpy(assignRef1,buf);
-//			assignRef1_valid=1;
-//			readline();//读入新的
-//			a=strstr(buf,"学院");
-//			if(a==NULL)
-//			{
-//				strcpy(assignRef2,buf);
-//				assignRef2_valid=1;
-//				readline();//读入新的
-//				a=strstr(buf,"学院");
-//				if(a==NULL)
-//				{
-//					strcpy(assignRef3,buf);
-//					assignRef3_valid=1;
-//					readline();//读入新的
-//					a=strstr(buf,"学院");
-//					if(a==NULL)
-//					{
-//						strcpy(assignRef4,buf);
-//						assignRef4_valid=1;
-//						readline();//读入新的
-//						a=strstr(buf,"学院");
-//						if(a==NULL)
-//						{
-//							strcpy(assignRef5,buf);
-//							assignRef5_valid=1;
-//							readline();//读入新的
-//							a=strstr(buf,"学院");
-//							if(a==NULL)
-//							{
-//								strcpy(assignRef6,buf);
-//								assignRef6_valid=1;
-//								readline();//读入新的
-//								a=strstr(buf,"学院");
-//								if(a==NULL)
-//								{
-//									strcpy(assignRef7,buf);
-//									assignRef7_valid=1;
-//									readline();//读入新的
-//									a=strstr(buf,"学院");
-//									if(a==NULL)
-//									{
-//										strcpy(assignRef8,buf);
-//										assignRef8_valid=1;
-//										readline();//读入新的
-//									}
-//								}
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//		return 1;
-//	}
-//以上是“原始资料及设计”、“工作内容”、“参考文献”
+	a=strstr(buf,"设计技术要求");
+	if(a!=NULL&&assignReq1_valid!=1)
+	{
+		fgets(buf,15010,in);//读入新的
+		int len=strlen(buf);
+		len--;
+		while(isspace(buf[len]))//去掉末尾空白
+		{
+			len--;
+		}
+		len++;
+		buf[len]='\0';
+		a=strstr(buf,"工作内容");
+		if(a==NULL)
+		{
+			strcpy(assignReq1,buf);
+			assignReq1_valid=1;
+			fgets(buf,15010,in);//读入新的
+			int len=strlen(buf);
+			len--;
+			while(isspace(buf[len]))//去掉末尾空白
+			{
+				len--;
+			}
+			len++;
+			buf[len]='\0';
+			a=strstr(buf,"工作内容");
+			if(a==NULL)
+			{
+				strcpy(assignReq2,buf);
+				assignReq2_valid=1;
+				fgets(buf,15010,in);//读入新的
+				int len=strlen(buf);
+				len--;
+				while(isspace(buf[len]))//去掉末尾空白
+				{
+					len--;
+				}
+				len++;
+				buf[len]='\0';
+				a=strstr(buf,"工作内容");
+				if(a==NULL)
+				{
+					strcpy(assignReq3,buf);
+					assignReq3_valid=1;
+					fgets(buf,15010,in);//读入新的
+					int len=strlen(buf);
+					len--;
+					while(isspace(buf[len]))//去掉末尾空白
+					{
+						len--;
+					}
+					len++;
+					buf[len]='\0';
+					a=strstr(buf,"工作内容");
+					if(a==NULL)
+					{
+						strcpy(assignReq4,buf);
+						assignReq4_valid=1;
+						fgets(buf,15010,in);//读入新的
+						int len=strlen(buf);
+						len--;
+						while(isspace(buf[len]))//去掉末尾空白
+						{
+							len--;
+						}
+						len++;
+						buf[len]='\0';
+						a=strstr(buf,"工作内容");
+						if(a==NULL)
+						{
+							strcpy(assignReq5,buf);
+							assignReq5_valid=1;
+							fgets(buf,15010,in);//读入新的
+							int len=strlen(buf);
+							len--;
+							while(isspace(buf[len]))//去掉末尾空白
+							{
+								len--;
+							}
+							len++;
+							buf[len]='\0';
+						}
+					}
+				}
+			}
+		}
+		fgets(buf,15010,in);//读入新的
+		len=strlen(buf);
+		len--;
+		while(isspace(buf[len]))//去掉末尾空白
+		{
+			len--;
+		}
+		len++;
+		buf[len]='\0';
+		a=strstr(buf,"参考资料");
+		if(a==NULL)
+		{
+			strcpy(assignWork1,buf);
+			assignWork1_valid=1;
+			fgets(buf,15010,in);//读入新的
+			int len=strlen(buf);
+			len--;
+			while(isspace(buf[len]))//去掉末尾空白
+			{
+				len--;
+			}
+			len++;
+			buf[len]='\0';
+			a=strstr(buf,"参考资料");
+			if(a==NULL)
+			{
+				strcpy(assignWork2,buf);
+				assignWork2_valid=1;
+				fgets(buf,15010,in);//读入新的
+				int len=strlen(buf);
+				len--;
+				while(isspace(buf[len]))//去掉末尾空白
+				{
+					len--;
+				}
+				len++;
+				buf[len]='\0';
+				a=strstr(buf,"参考资料");
+				if(a==NULL)
+				{
+					strcpy(assignWork3,buf);
+					assignWork3_valid=1;
+					fgets(buf,15010,in);//读入新的
+					int len=strlen(buf);
+					len--;
+					while(isspace(buf[len]))//去掉末尾空白
+					{
+						len--;
+					}
+					len++;
+					buf[len]='\0';
+					a=strstr(buf,"参考资料");
+					if(a==NULL)
+					{
+						strcpy(assignWork4,buf);
+						assignWork4_valid=1;
+						fgets(buf,15010,in);//读入新的
+						int len=strlen(buf);
+						len--;
+						while(isspace(buf[len]))//去掉末尾空白
+						{
+							len--;
+						}
+						len++;
+						buf[len]='\0';
+						a=strstr(buf,"参考资料");
+						if(a==NULL)
+						{
+							strcpy(assignWork5,buf);
+							assignWork5_valid=1;
+							fgets(buf,15010,in);//读入新的
+							int len=strlen(buf);
+							len--;
+							while(isspace(buf[len]))//去掉末尾空白
+							{
+								len--;
+							}
+							len++;
+							buf[len]='\0';
+							a=strstr(buf,"参考资料");
+							if(a==NULL)
+							{
+								strcpy(assignWork6,buf);
+								assignWork6_valid=1;
+								fgets(buf,15010,in);//读入新的
+								int len=strlen(buf);
+								len--;
+								while(isspace(buf[len]))//去掉末尾空白
+								{
+									len--;
+								}
+								len++;
+								buf[len]='\0';
+							}
+						}
+					}
+				}
+			}
+		}
+		fgets(buf,15010,in);//读入新的
+		len=strlen(buf);
+		len--;
+		while(isspace(buf[len]))//去掉末尾空白
+		{
+			len--;
+		}
+		len++;
+		buf[len]='\0';
+		a=strstr(buf,"学院");
+		if(a==NULL)
+		{
+			strcpy(assignRef1,buf);
+			assignRef1_valid=1;
+			fgets(buf,15010,in);//读入新的
+			int len=strlen(buf);
+			len--;
+			while(isspace(buf[len]))//去掉末尾空白
+			{
+				len--;
+			}
+			len++;
+			buf[len]='\0';
+			a=strstr(buf,"学院");
+			if(a==NULL)
+			{
+				strcpy(assignRef2,buf);
+				assignRef2_valid=1;
+				fgets(buf,15010,in);//读入新的
+				int len=strlen(buf);
+				len--;
+				while(isspace(buf[len]))//去掉末尾空白
+				{
+					len--;
+				}
+				len++;
+				buf[len]='\0';
+				a=strstr(buf,"学院");
+				if(a==NULL)
+				{
+					strcpy(assignRef3,buf);
+					assignRef3_valid=1;
+					fgets(buf,15010,in);//读入新的
+					int len=strlen(buf);
+					len--;
+					while(isspace(buf[len]))//去掉末尾空白
+					{
+						len--;
+					}
+					len++;
+					buf[len]='\0';
+					a=strstr(buf,"学院");
+					if(a==NULL)
+					{
+						strcpy(assignRef4,buf);
+						assignRef4_valid=1;
+						fgets(buf,15010,in);//读入新的
+						int len=strlen(buf);
+						len--;
+						while(isspace(buf[len]))//去掉末尾空白
+						{
+							len--;
+						}
+						len++;
+						buf[len]='\0';
+						a=strstr(buf,"学院");
+						if(a==NULL)
+						{
+							strcpy(assignRef5,buf);
+							assignRef5_valid=1;
+							fgets(buf,15010,in);//读入新的
+							int len=strlen(buf);
+							len--;
+							while(isspace(buf[len]))//去掉末尾空白
+							{
+								len--;
+							}
+							len++;
+							buf[len]='\0';
+							a=strstr(buf,"学院");
+							if(a==NULL)
+							{
+								strcpy(assignRef6,buf);
+								assignRef6_valid=1;
+								fgets(buf,15010,in);//读入新的
+								int len=strlen(buf);
+								len--;
+								while(isspace(buf[len]))//去掉末尾空白
+								{
+									len--;
+								}
+								len++;
+								buf[len]='\0';
+								a=strstr(buf,"学院");
+								if(a==NULL)
+								{
+									strcpy(assignRef7,buf);
+									assignRef7_valid=1;
+									fgets(buf,15010,in);//读入新的
+									int len=strlen(buf);
+									len--;
+									while(isspace(buf[len]))//去掉末尾空白
+									{
+										len--;
+									}
+									len++;
+									buf[len]='\0';
+									a=strstr(buf,"学院");
+									if(a==NULL)
+									{
+										strcpy(assignRef8,buf);
+										assignRef8_valid=1;
+										fgets(buf,15010,in);//读入新的
+										int len=strlen(buf);
+										len--;
+										while(isspace(buf[len]))//去掉末尾空白
+										{
+											len--;
+										}
+										len++;
+										buf[len]='\0';
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return 1;
+	}
 	a=strstr(buf,"班");
 	if(a!=NULL&&class_num_valid!=1)//定位到班一行
 	{
@@ -1322,7 +1502,7 @@ int checkcover()//用于提取信息的checkcover——要时刻检查样例。�
 	a=strstr(buf,"毕业设计");
 	b=strstr(buf,"论文");
 	c=strstr(buf,"时间");
-	if(a!=NULL&&b!=NULL&&b!=NULL&&thesisbegin_year_valid!=1)
+	if(a!=NULL&&b!=NULL&&c!=NULL&&thesisbegin_year_valid!=1)
 	{
 		c=strstr(buf,"时间：");
 		c+=strlen("时间：");
@@ -1331,7 +1511,6 @@ int checkcover()//用于提取信息的checkcover——要时刻检查样例。�
 			c++;
 		}
 		strcpy(thesisbegin_year,c);//年从这起始
-		
 		a=strstr(thesisbegin_year,"年");//定位
 		b=a;//同时定位月的起始
 		b+=strlen("年");//b指向后半部分
@@ -1340,7 +1519,6 @@ int checkcover()//用于提取信息的checkcover——要时刻检查样例。�
 			b++;
 		}
 		strcpy(thesisbegin_month,b);//必须提前搬运，月从这起始
-		
 		a--;
 		while(isspace(*a))//倒着剪裁空格
 		{
@@ -1349,17 +1527,14 @@ int checkcover()//用于提取信息的checkcover——要时刻检查样例。�
 		a++;
 		*a='\0';//在这里截断
 		thesisbegin_year_valid=1;//年处理完成
-		
 		c=strstr(thesisbegin_month,"月");//定位
 		a=c;//同时定位日的起始
-		a+=strlen("月");//b指向后半部分
+		a+=strlen("月");//a指向后半部分
 		while(isspace(*a))
 		{
 			a++;
 		}
 		strcpy(thesisbegin_date,a);//必须提前搬运，日从这起始
-		//年 /( 月)月(日)日至 (年) 年(月)月(日)日
-		
 		c--;
 		while(isspace(*c))//倒着剪裁空格
 		{
@@ -1368,66 +1543,292 @@ int checkcover()//用于提取信息的checkcover——要时刻检查样例。�
 		c++;
 		*c='\0';//在这里截断
 		thesisbegin_month_valid=1;//月处理完成
-		
-		
-		
-		//
-		
-		
-		thesisdate_year_valid=1;
-		thesisdate_month_valid=1;
-		
-		//毕业设计 (论文) 时间： (年) 年(月)月(日)日至 (年) 年(月)月(日)日
-		
-
-		
-		strcpy(thesisbegin_month,buf);
-		a=thesisbegin_month;
-		a+=strlen(thesisbegin_month);
-		a-=strlen("月");
-		*a='\0';
-		thesisbegin_month_valid=1;
+		b=strstr(thesisbegin_date,"日至");//定位
+		c=b;//同时定位年的起始
+		c+=strlen("日至");//c指向后半部分
+		while(isspace(*c))
+		{
+			c++;
+		}
+		strcpy(thesisend_year,c);//必须提前搬运，年从这起始
+		b--;
+		while(isspace(*b))//倒着剪裁空格
+		{
+			b--;
+		}
+		b++;
+		*b='\0';//在这里截断
+		thesisbegin_date_valid=1;//日处理完成
+		a=strstr(thesisend_year,"年");//定位
+		b=a;//同时定位月的起始
+		b+=strlen("年");//b指向后半部分
+		while(isspace(*c))
+		{
+			c++;
+		}
+		strcpy(thesisend_month,c);//必须提前搬运，月从这起始
+		a--;
+		while(isspace(*a))//倒着剪裁空格
+		{
+			a--;
+		}
+		a++;
+		*a='\0';//在这里截断
+		thesisend_year_valid=1;//年处理完成
+		c=strstr(thesisend_month,"月");//定位
+		a=c;//同时定位日的起始
+		a+=strlen("月");//a指向后半部分
+		while(isspace(*a))
+		{
+			a++;
+		}
+		strcpy(thesisend_date,a);//必须提前搬运，日从这起始
+		c--;
+		while(isspace(*c))//倒着剪裁空格
+		{
+			c--;
+		}
+		c++;
+		*c='\0';//在这里截断
+		thesisend_month_valid=1;//月处理完成
+		b=strstr(thesisend_date,"日");//定位
+		b--;
+		while(isspace(*b))//倒着剪裁空格
+		{
+			b--;
+		}
+		b++;
+		*b='\0';//在这里截断
+		thesisend_date_valid=1;//日处理完成
 		return 1;
-		
-		strcpy(thesisbegin_date,buf);
-		a=thesisbegin_date;
-		a+=strlen(thesisbegin_date);
-		a-=strlen("日至");
-		*a='\0';
-		thesisbegin_date_valid=1;
-		return 1;
-		
-		strcpy(thesisend_year,buf);
-		a=thesisend_year;
-		a+=strlen(thesisend_year);
-		a-=strlen("年");
-		*a='\0';
-		thesisend_year_valid=1;
-		return 1;
-		
-		strcpy(thesisend_month,buf);
-		a=thesisend_month;
-		a+=strlen(thesisend_month);
-		a-=strlen("月");
-		*a='\0';
-		thesisend_month_valid=1;
-		return 1;
-		
-		strcpy(thesisend_date,buf);
-		a=thesisend_date;
-		a+=strlen(thesisend_date);
-		a-=strlen("日");
-		*a='\0';
-		thesisend_date_valid=1;
-		return 1;
-		
-		
 	}
-	
-	
-	
-	//答辩时间： (年) 年 (月) 月 (日) 日
-	
+	a=strstr(buf,"答辩");
+	b=strstr(buf,"时间");
+	if(a!=NULL&&b!=NULL&&defense_year_valid!=1)
+	{
+		c=strstr(buf,"时间：");
+		c+=strlen("时间：");
+		while(isspace(*c))
+		{
+			c++;
+		}
+		strcpy(defense_year,c);//年从这起始
+		a=strstr(defense_year,"年");//定位
+		b=a;//同时定位月的起始
+		b+=strlen("年");//b指向后半部分
+		while(isspace(*b))
+		{
+			b++;
+		}
+		strcpy(defense_month,b);//提前搬运，月从这起始
+		a--;
+		while(isspace(*a))//倒着剪裁空格
+		{
+			a--;
+		}
+		a++;
+		*a='\0';//在这里截断
+		defense_year_valid=1;//年处理完成
+		c=strstr(defense_month,"月");//定位
+		a=c;//同时定位日的起始
+		a+=strlen("月");//a指向后半部分
+		while(isspace(*a))
+		{
+			a++;
+		}
+		strcpy(defense_date,a);//提前搬运，日从这起始
+		c--;
+		while(isspace(*c))//倒着剪裁空格
+		{
+			c--;
+		}
+		c++;
+		*c='\0';//在这里截断
+		defense_month_valid=1;//月处理完成
+		b=strstr(defense_date,"日");//定位
+		b--;
+		while(isspace(*b))//倒着剪裁空格
+		{
+			b--;
+		}
+		b++;
+		*b='\0';//在这里截断
+		defense_date_valid=1;//日处理完成
+	}
+	a=strstr(buf,"北京航空航天大学毕业设计");
+	b=strstr(buf,"I");//摘要是第I页
+	if(a!=NULL&&b!=NULL&&title_ch_valid!=1)
+	{
+		fgets(buf,15010,in);//重新读入一遍
+		int len=strlen(buf);
+		len--;
+		while(isspace(buf[len]))//去掉末尾空白
+		{
+			len--;
+		}
+		len++;
+		buf[len]='\0';
+		strcpy(title_ch,buf);//标题
+		title_ch_valid=1;
+		fgets(buf,15010,in);//重新读入一遍
+		len=strlen(buf);
+		len--;
+		while(isspace(buf[len]))//去掉末尾空白
+		{
+			len--;
+		}
+		len++;
+		buf[len]='\0';
+		strcpy(subtitle_ch,buf);//副标题
+		subtitle_ch_valid=1;
+		return 1;
+	}
+	a=strstr(buf,"摘");
+	b=strstr(buf,"要");//从这里开始是摘要和关键词
+	if(a!=NULL&&b!=NULL&&abstract_ch_valid!=1)
+	{
+		fgets(buf,15010,in);//重新读入一遍
+		int len=strlen(buf);
+		len--;
+		while(isspace(buf[len])&&buf[len]!='\n')//去掉末尾空白，但这里换行除外
+		{
+			len--;
+		}
+		len++;
+		a=strstr(buf,"关键词");
+		while(a==NULL)
+		{
+			printf("success!");
+			strcat(abstract_ch,buf);//直接接上去
+			fgets(buf,15010,in);//重新读入一遍
+			int len=strlen(buf);
+			len--;
+			while(isspace(buf[len])&&buf[len]!='\n')//去掉末尾空白，但这里换行除外
+			{
+				len--;
+			}
+			len++;
+			a=strstr(buf,"关键词");
+		}
+		abstract_ch_valid=1;//摘要
+		len=strlen(buf);//关键词行，重新裁剪
+		len--;
+		while(isspace(buf[len]))//去掉末尾空白
+		{
+			len--;
+		}
+		len++;
+		buf[len]='\0';
+		a=strstr(buf,"关键词：");
+		a+=strlen("关键词：");
+		while(isspace(*a))
+		{
+			a++;
+		}
+		strcpy(keyword_ch,a);//关键词
+		keyword_ch_valid=1;
+		return 1;
+	}
+	a=strstr(buf,"北京航空航天大学毕业设计");
+	b=strstr(buf,"II");//摘要是第I页
+	if(a!=NULL&&b!=NULL&&title_en_valid!=1)
+	{
+		fgets(buf,15010,in);//重新读入一遍
+		int len=strlen(buf);
+		len--;
+		while(isspace(buf[len]))//去掉末尾空白
+		{
+			len--;
+		}
+		len++;
+		buf[len]='\0';
+		strcpy(title_en,buf);//标题
+		title_en_valid=1;
+		fgets(buf,15010,in);//重新读入一遍
+		len=strlen(buf);
+		len--;
+		while(isspace(buf[len]))//去掉末尾空白
+		{
+			len--;
+		}
+		len++;
+		buf[len]='\0';
+		strcpy(subtitle_en,buf);//副标题
+		subtitle_en_valid=1;
+		return 1;
+	}
+	a=strstr(buf,"Author");
+	if(a!=NULL&&author_en_valid!=1)
+	{
+		a=strstr(buf,"Author:");
+		a+=strlen("Author:");
+		while(isspace(*a))
+		{
+			a++;
+		}
+		strcpy(author_en,a);
+		author_en_valid=1;
+		return 1;
+	}
+	a=strstr(buf,"Tutor");
+	if(a!=NULL&&teacher_en_valid!=1)
+	{
+		a=strstr(buf,"Tutor:");
+		a+=strlen("Tutor:");
+		while(isspace(*a))
+		{
+			a++;
+		}
+		strcpy(teacher_en,a);
+		teacher_en_valid=1;
+		return 1;
+	}
+	a=strstr(buf,"Abstract");//从这里开始是摘要和关键词
+	if(a!=NULL&&abstract_en_valid!=1)
+	{
+		fgets(buf,15010,in);//重新读入一遍
+		int len=strlen(buf);
+		len--;
+		while(isspace(buf[len])&&buf[len]!='\n')//去掉末尾空白，但这里换行除外
+		{
+			len--;
+		}
+		len++;
+		a=strstr(buf,"Key");
+		b=strstr(buf,"words");
+		while(a==NULL||b==NULL)
+		{
+			strcat(abstract_en,buf);//直接接上去
+			fgets(buf,15010,in);//重新读入一遍
+			int len=strlen(buf);
+			len--;
+			while(isspace(buf[len])&&buf[len]!='\n')//去掉末尾空白，但这里换行除外
+			{
+				len--;
+			}
+			len++;
+			a=strstr(buf,"Key");
+			b=strstr(buf,"words");
+		}
+		abstract_en_valid=1;//摘要
+		len=strlen(buf);//关键词行，重新裁剪
+		len--;
+		while(isspace(buf[len]))//去掉末尾空白
+		{
+			len--;
+		}
+		len++;
+		buf[len]='\0';
+		b=strstr(buf,"words:");
+		b+=strlen("words:");
+		while(isspace(*b))
+		{
+			b++;
+		}
+		strcpy(keyword_en,b);//关键词
+		keyword_en_valid=1;
+		return 1;
+	}
 	a=strstr(buf,"目");//定位结束
 	b=strstr(buf,"录");
 	if(a!=NULL&&b!=NULL)
@@ -1438,6 +1839,7 @@ int checkcover()//用于提取信息的checkcover——要时刻检查样例。�
 
 void print_cover()//逐步输出文件
 {
+	printf("OK2\n");
 	fprintf(out,"%% !Mode:: \"TeX:UTF-8\"\n");
 	fprintf(out,"\\unicode{10006}\n");
 	fprintf(out,"\\studentID{%s}\n",studentID);//学号
@@ -1490,14 +1892,9 @@ void print_cover()//逐步输出文件
 	fprintf(out,"\\ekeyword{%s}\n",keyword_en);//英文关键词
 }
 
-void process_cover()//处理开头
+void process_cover()//处理开头——为了定位，这部分页眉要特判
 {
 	fgets(buf,15010,in);//读入第一行
-	char *a=strstr(buf,"北京航空航天大学毕业设计");
-	if(a!=NULL)
-	{
-		fgets(buf,15010,in);//重新读入一遍
-	}
 	int len=strlen(buf);
 	len--;
 	while(isspace(buf[len]))//去掉末尾空白
@@ -1509,11 +1906,6 @@ void process_cover()//处理开头
 	while(checkcover()!=-1)//checkcover没结束
 	{
 		fgets(buf,15010,in);//读入新的行
-		char *a=strstr(buf,"北京航空航天大学毕业设计");
-		if(a!=NULL)
-		{
-			fgets(buf,15010,in);//重新读入一遍
-		}
 		int len=strlen(buf);
 		len--;
 		while(isspace(buf[len]))//去掉末尾空白
