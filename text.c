@@ -877,6 +877,11 @@ void process_appendix()//附录部分——待完成——处理标题
 	}
 }
 
+void printbibs()
+{
+	
+}
+
 void checkappbegin()//附录A开头
 {
 	fgets(buf,15010,in);//含空白符
@@ -1931,9 +1936,9 @@ int main()
 	out=fopen("3conclusion.tex","w");//打开conclusion。此时这一行拥有结论二字
 	process_conclusion();//结论部分——待完成
 	fclose(out);//关闭conclusion
-//	out=fopen("4bibs.bib","w");//打开bibs……这个功能去了吧
-//	printbibs();
-//	fclose(out);//关闭bibs
+	out=fopen("4bibs.bib","w");//打开bibs
+	printbibs();
+	fclose(out);//关闭bibs
 	out=fopen("5appendix.tex","w");//打开appendix
 	checkappbegin();//执行结束后，这一行里拥有附录——这个功能本来应该在上一部分
 	process_appendix();//附录部分——待完成
