@@ -879,7 +879,18 @@ void process_appendix()//附录部分——待完成——处理标题
 
 void printbibs()
 {
-	
+	while(1)
+	{
+		fgets(buf,15010,in);
+		if(strstr(buf,"附")!=NULL)
+		{
+			break;
+		}
+		else
+		{
+			fprintf(out,"%s\n",buf);
+		}
+	}
 }
 
 void checkappbegin()//附录A开头
